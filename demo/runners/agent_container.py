@@ -320,7 +320,6 @@ class AriesAgent(DemoAgent):
         state = message.get("state")
 
         presentation_exchange_id = message["presentation_exchange_id"]
-        presentation_request = message["presentation_request"]
         self.log(
             "Presentation: state =",
             state,
@@ -329,6 +328,7 @@ class AriesAgent(DemoAgent):
         )
 
         if state == "request_received":
+            presentation_request = message["presentation_request"]
             log_status(
                 "#24 Query for credentials in the wallet that satisfy the proof request"
             )
