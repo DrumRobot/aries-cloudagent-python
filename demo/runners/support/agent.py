@@ -24,6 +24,22 @@ from aiohttp import (
 
 from .utils import flatten, log_json, log_msg, log_timer, output_reader
 
+
+import sentry_sdk
+from sentry_sdk.integrations.aiohttp import AioHttpIntegration
+
+sentry_sdk.init(
+    dsn="https://138df0b8761f4badb55b354c6e8b8b02@o4505248881180672.ingest.sentry.io/4505315560325120",
+    integrations=[
+        AioHttpIntegration(),
+    ],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production,
+    traces_sample_rate=1.0,
+)
+
 LOGGER = logging.getLogger(__name__)
 
 event_stream_handler = logging.StreamHandler()
