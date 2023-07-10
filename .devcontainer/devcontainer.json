@@ -2,14 +2,9 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
     "name": "aries_cloudagent",
-    "build": {
-        "dockerfile": "Dockerfile",
-        "context": "..",
-        "args": {
-          "VARIANT": "3.9-bullseye",
-          "POETRY_VERSION": "1.7.1"
-        }
-    },
+    "dockerComposeFile": "nginx/docker-compose.yml",
+    "service": "faber",
+    "workspaceFolder": "/workspace",
     "customizations": {
         "vscode": {
             "extensions": [
