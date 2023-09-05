@@ -38,4 +38,5 @@ aca-py start \
     --wallet-storage-type postgres_storage \
     --admin-insecure-mode \
     --admin 0.0.0.0 ${AGENT_HTTP_ADMIN_PORT} \
+    --genesis-url ${GENESIS_URL} \
     --endpoint "${ACAPY_ENDPOINT}"
