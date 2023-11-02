@@ -34,7 +34,8 @@ class BasicMessageHandler(BaseHandler):
             meta["copy_invite"] = True
 
         payload = {
-            "connection_id": context.connection_record.connection_id,
+            "connection_id": context.connection_record
+            and context.connection_record.connection_id,
             "message_id": context.message._id,
             "content": body,
             "state": "received",
@@ -47,12 +48,12 @@ class BasicMessageHandler(BaseHandler):
         await context.profile.notify("acapy::basicmessage::received", payload)
 
         reply = None
-        if body:
-            if context.settings.get("debug.auto_respond_messages"):
-                if "received your message" not in body:
-                    reply = f"{context.default_label} received your message"
-            elif body.startswith("Reply with: "):
-                reply = body[12:]
+        # if body:
+        # if context.settings.get("debug.auto_respond_messages"):
+        #     if "received your message" not in body:
+        #         reply = f"{context.default_label} received your message"
+        # elif body.startswith("Reply with: "):
+        # reply = body[12:]
 
         if reply:
             reply_msg = BasicMessage(content=reply)

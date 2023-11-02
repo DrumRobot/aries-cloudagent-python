@@ -3,7 +3,7 @@ import requests
 import os
 import sys
 
-API_URL = "http://host.docker.internal:3000/urls"
+API_URL = "http://192.168.42.5:3000/urls"
 NGROK_URL = "http://ngrok:4040/api/tunnels"
 
 variables = [
@@ -27,7 +27,15 @@ if __name__ == "__main__":
             print(f"{name}, {value}")
             os.environ[name] = value
 
-    args = ["--aip", "10", "--revocation", "--seed", "testseed000000000000000000000001"]
+    args = [
+        "--aip",
+        "10",
+        "--revocation",
+        "--seed",
+        "testseed000000000000000000000001",
+        # "--storage-type",
+        # "indy",
+    ]
     sys.argv = [sys.argv[0]] + args
 
     from runners.faber import main

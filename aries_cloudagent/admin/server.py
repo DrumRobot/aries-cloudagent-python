@@ -11,7 +11,7 @@ from typing import Callable, Coroutine, Optional, Pattern, Sequence, cast
 
 import aiohttp_cors
 import jwt
-from aiohttp import web
+from aiohttp import web, web_exceptions
 from aiohttp_apispec import (
     docs,
     response_schema,
@@ -193,7 +193,11 @@ async def ready_middleware(request: web.BaseRequest, handler: Coroutine):
             # redirection spawns new task and cancels old
             LOGGER.debug("Task cancelled")
             raise
+        # except web_exceptions.HTTPMethodNotAllowed as e:
+        #     LOGGER.error(e.headers)
+        #     raise
         except Exception as e:
+            LOGGER.error(request.url)
             # some other error?
             LOGGER.error("Handler error with exception: %s", str(e))
             import traceback
@@ -210,9 +214,11 @@ async def debug_middleware(request: web.BaseRequest, handler: Coroutine):
     """Show request detail in debug log."""
 
     if LOGGER.isEnabledFor(logging.DEBUG):
-        LOGGER.debug(f"Incoming request: {request.method} {request.path_qs}")
+        LOGGER.info(
+            f"Incoming request: {request.method} {request.path_qs} {body.keys()}"
+        )
         LOGGER.debug(f"Match info: {request.match_info}")
-        body = await request.text() if request.body_exists else None
+        body: dict = await request.json() if request.body_exists else None
         LOGGER.debug(f"Body: {body}")
 
     return await handler(request)

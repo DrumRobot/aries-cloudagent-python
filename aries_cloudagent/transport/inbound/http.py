@@ -143,4 +143,5 @@ class HttpTransport(BaseInboundTransport):
                 "invitation, paste it into your agent application."
             )
         else:
+            LOGGER.error(request.url)
             return web.Response(status=200)

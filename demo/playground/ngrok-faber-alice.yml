@@ -1,3 +1,5 @@
+authtoken: 2QdjNiJZ38hKftikdbXEORUHWCx_4SBbJ1XzS34ASdfN52EzT
+log: stdout
 tunnels:
     faber:
         proto: http
@@ -6,3 +8,4 @@ tunnels:
         proto: http
         addr: alice-agent:9002
 version: "2"
+web_addr: 0.0.0.0:4040

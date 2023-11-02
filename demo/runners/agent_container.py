@@ -401,6 +401,11 @@ class AriesAgent(DemoAgent):
                 f"/present-proof/records/{presentation_exchange_id}/verify-presentation"
             )
             self.log("Proof =", proof["verified"])
+            # if proof["verified"]:
+            #     await self.admin_POST(
+            #         f"/connections/{self.connection_id}/send-message",
+            #         {"content": "OO센터 방문을 환영합니다\n신청서류는 OO로 OO창구로 신청하세요. "},
+            #     )
 
         elif state == "abandoned":
             log_status("Presentation exchange abandoned")
