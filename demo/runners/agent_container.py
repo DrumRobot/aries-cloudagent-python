@@ -1386,6 +1386,18 @@ def arg_parser(ident: str = None, port: int = 8020):
             "('debug', 'info', 'warning', 'error', 'critical')"
         ),
     )
+    parser.add_argument(
+        "--seed",
+        type=str,
+        default="random",
+        metavar="<wallet-seed>",
+        help=(
+            "Specifies the seed to use for the creation of a public "
+            "DID for the agent to use with a Hyperledger Indy ledger, or a local "
+            "('--wallet-local-did') DID. If public, the DID must already exist "
+            "on the ledger."
+        ),
+    )
     return parser
 
 
@@ -1496,7 +1508,7 @@ async def create_agent_with_args(args, ident: str = None, extra_args: list = Non
         use_did_exchange=(aip == 20) if ("aip" in args) else args.did_exchange,
         wallet_type=arg_file_dict.get("wallet-type") or args.wallet_type,
         public_did=public_did,
-        seed="random" if public_did else None,
+        seed=args.seed if public_did else None,
         arg_file=arg_file,
         aip=aip,
         endorser_role=args.endorser_role,
@@ -1544,7 +1556,7 @@ async def test_main(
             use_did_exchange=use_did_exchange,
             wallet_type=wallet_type,
             public_did=True,
-            seed="random",
+            seed="testseed000000000000000000000001",
             cred_type=cred_type,
             aip=aip,
         )

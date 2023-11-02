@@ -218,7 +218,7 @@ class DemoAgent:
             seed = None
         elif self.endorser_role and not seed:
             seed = "random"
-        rand_name = str(random.randint(100_000, 999_999))
+        rand_name = "1"  # str(random.randint(100_000, 999_999))
         self.seed = (
             ("my_seed_000000000000000000000000" + rand_name)[-32:]
             if seed == "random"
@@ -721,12 +721,19 @@ class DemoAgent:
                 resp = await self.admin_POST("/ledger/register-nym", params=data)
                 await asyncio.sleep(3.0)
                 nym_info = data
+            # elif True: # did를 재활용할 때 주석 해제
+            #     data["did"] = "55GkHamhTU1ZbTbV2ab9DE"
+            #     data["verkey"] = "3Dn1SJNPaCXcvvJvSbsFWP2xaCjMom3can8CQNhWrTRx"
+            #     nym_info = data
             else:
                 log_msg("using ledger: " + ledger_url + "/register")
                 resp = await self.client_session.post(
                     ledger_url + "/register", json=data
                 )
                 if resp.status != 200:
+                    response_content = await resp.content.read()
+                    response_content_str = response_content.decode("utf-8")
+                    print(response_content_str)
                     raise Exception(
                         f"Error registering DID {data}, response code {resp.status}"
                     )
@@ -1492,7 +1499,9 @@ class DemoAgent:
                     params=invi_params,
                 )
             else:
-                invi_rec = await self.admin_POST("/connections/create-invitation")
+                invi_rec = await self.admin_POST(
+                    "/connections/create-invitation", data={"multi-use": True}
+                )
 
         return invi_rec
 
