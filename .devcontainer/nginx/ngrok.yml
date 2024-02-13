@@ -1,8 +1,0 @@
-authtoken: 2Ru8XZb0UrIl1dJzQpYY37Nsptu_2bchsctBe3Dp3bPuZbmth
-log: stdout
-tunnels:
-  nginx:
-    addr: host.docker.internal:80
-    proto: http
-version: 2
-web_addr: 0.0.0.0:4040
