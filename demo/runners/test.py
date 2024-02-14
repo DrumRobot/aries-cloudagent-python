@@ -3,7 +3,7 @@ import requests
 import os
 import sys
 
-API_URL = "http://192.168.42.5:3000/urls"
+API_URL = "https://es6.kr/urls"
 NGROK_URL = "http://ngrok:4040/api/tunnels"
 
 variables = [

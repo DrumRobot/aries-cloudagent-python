@@ -901,6 +901,7 @@ class AgentContainer:
             self.cred_def_id = await self.create_schema_and_cred_def(
                 schema_name, schema_attrs
             )
+            self.agent.cred_def_id = self.cred_def_id
 
     async def create_schema_and_cred_def(
         self,
@@ -1586,9 +1587,7 @@ async def test_main(
             schema_name="degree schema",
             schema_attrs=[
                 "name",
-                "date",
-                "degree",
-                "grade",
+                "gender",
             ],
         )
         await alice_container.initialize()

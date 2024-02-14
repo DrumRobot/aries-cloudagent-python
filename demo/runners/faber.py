@@ -83,7 +83,7 @@ class FaberAgent(AriesAgent):
     def connection_ready(self):
         return self._connection_ready.done() and self._connection_ready.result()
 
-    def generate_credential_offer(self, aip, cred_type, cred_def_id, exchange_tracing):
+    def generate_credential_offer(self, aip, cred_type, cred_def_id, exchange_tracing, **kwargs):
         age = 24
         d = datetime.date.today()
         birth_date = datetime.date(d.year - age, d.month, d.day)
@@ -91,11 +91,10 @@ class FaberAgent(AriesAgent):
         if aip == 10:
             # define attributes to send for credential
             self.cred_attrs[cred_def_id] = {
-                "name": "Alice Smith",
-                "date": "2018-05-28",
-                "degree": "Maths",
-                "birthdate_dateint": birth_date.strftime(birth_date_format),
-                "timestamp": str(int(time.time())),
+                "birthdate_dateint": kwargs["birthdate_dateint"],
+                "gender": kwargs["gender"],
+                "name": kwargs["name"],
+                "timestamp": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), # idntyCrtfctIssuDt
             }
 
             cred_preview = {
@@ -188,32 +187,18 @@ class FaberAgent(AriesAgent):
         d = datetime.date.today()
         birth_date = datetime.date(d.year - age, d.month, d.day)
         birth_date_format = "%Y%m%d"
+        schema_name = "identity certificate"
         if aip == 10:
             req_attrs = [
                 {
                     "name": "name",
-                    "restrictions": [{"schema_name": "degree schema"}],
+                    "restrictions": [{"schema_name": schema_name}],
                 },
                 {
-                    "name": "date",
-                    "restrictions": [{"schema_name": "degree schema"}],
+                    "name": "gender",
+                    "restrictions": [{"schema_name": schema_name}],
                 },
             ]
-            if revocation:
-                req_attrs.append(
-                    {
-                        "name": "degree",
-                        "restrictions": [{"schema_name": "degree schema"}],
-                        "non_revoked": {"to": int(time.time() - 1)},
-                    },
-                )
-            else:
-                req_attrs.append(
-                    {
-                        "name": "degree",
-                        "restrictions": [{"schema_name": "degree schema"}],
-                    }
-                )
             if SELF_ATTESTED:
                 # test self-attested claims
                 req_attrs.append(
@@ -225,11 +210,11 @@ class FaberAgent(AriesAgent):
                     "name": "birthdate_dateint",
                     "p_type": "<=",
                     "p_value": int(birth_date.strftime(birth_date_format)),
-                    "restrictions": [{"schema_name": "degree schema"}],
+                    "restrictions": [{"schema_name": schema_name}],
                 }
             ]
             indy_proof_request = {
-                "name": "Proof of Education",
+                "name": "개인 맞춤형 알림 인증",
                 "version": "1.0",
                 "requested_attributes": {
                     f"0_{req_attr['name']}_uuid": req_attr for req_attr in req_attrs
@@ -381,6 +366,18 @@ class FaberAgent(AriesAgent):
         else:
             raise Exception(f"Error invalid AIP level: {self.aip}")
 
+    async def handle_basicmessages(self, message):
+        content: dict = json.loads(message["content"])
+        exchange_tracing = False
+        self.log("FaberAgent.handle_basicmessages:", content.keys())
+        offer_request = self.generate_credential_offer(
+            self.aip, None, self.cred_def_id, exchange_tracing, **content
+        )
+        response = await self.admin_POST(
+            "/issue-credential/send-offer", offer_request
+        )
+        self.log("sent-offer:", response)
+
 
 async def main(args):
     extra_args = None
@@ -425,11 +422,10 @@ async def main(args):
             extra_args=extra_args,
         )
 
-        faber_schema_name = "degree schema"
+        faber_schema_name = "identity certificate"
         faber_schema_attrs = [
             "name",
-            "date",
-            "degree",
+            "gender",
             "birthdate_dateint",
             "timestamp",
         ]
