@@ -35,3 +35,6 @@ markers = [
 junit_family = "xunit1"
 asyncio_mode = auto
 EOF
+
+pip3 install poetry
+poetry install

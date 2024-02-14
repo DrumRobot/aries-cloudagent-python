@@ -1596,6 +1596,7 @@ async def connect_wallet_to_mediator(agent, mediator_agent):
         "/connections/create-invitation"
     )
     mediator_agent.mediator_connection_id = mediator_connection["connection_id"]
+    log_json(mediator_connection)
 
     # accept the invitation
     log_msg("Accept mediation invite ...")
@@ -1608,6 +1609,20 @@ async def connect_wallet_to_mediator(agent, mediator_agent):
     await mediator_agent.detect_connection()
     log_msg("Connected agent to mediator:", agent.ident, mediator_agent.ident)
 
+    if connect_to_mediator(agent):
+        return mediator_agent
+
+async def connect_to_mediator_invitation(agent, invitation):
+    # accept the invitation
+    log_msg("Accept mediation invite ...")
+    connection = await agent.admin_POST(
+        "/connections/receive-invitation", invitation
+    )
+    agent.mediator_connection_id = connection["connection_id"]
+
+    connect_to_mediator(agent)
+
+async def connect_to_mediator(agent):
     # setup mediation on our connection
     log_msg(f"Request mediation on connection {agent.mediator_connection_id} ...")
     mediation_request = await agent.admin_POST(
@@ -1624,7 +1639,7 @@ async def connect_wallet_to_mediator(agent, mediator_agent):
         )
         if mediation_status["state"] == "granted":
             log_msg("Mediation setup successfully!", mediation_status)
-            return mediator_agent
+            return True
         count = count - 1
 
     log_msg("Mediation connection FAILED :-(")

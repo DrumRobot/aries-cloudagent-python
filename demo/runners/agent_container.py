@@ -19,6 +19,7 @@ from runners.support.agent import (  # noqa:E402
     DemoAgent,
     default_genesis_txns,
     start_mediator_agent,
+    connect_to_mediator_invitation,
     connect_wallet_to_mediator,
     start_endorser_agent,
     connect_wallet_to_endorser,
@@ -71,6 +72,7 @@ class AriesAgent(DemoAgent):
                     "--auto-accept-invites",
                     "--auto-accept-requests",
                     "--auto-store-credential",
+                    f"--mediator-invitation={os.environ['MEDIATOR_URL']}",
                 )
             )
         if anoncreds_legacy_revocation:
@@ -863,6 +865,10 @@ class AgentContainer:
                     self.agent, self.mediator_agent
                 ):
                     raise Exception("Mediation setup FAILED :-(")
+            # else:
+            #     if not await connect_to_mediator_invitation(self, os.environ['MEDIATOR_URL']):
+            #         log_msg("Mediation setup FAILED :-(")
+            #         raise Exception("Mediation setup FAILED :-(")
             if self.endorser_agent:
                 self.agent.log("Connect wallet to endorser ...")
                 if not await connect_wallet_to_endorser(
@@ -1562,7 +1568,7 @@ async def test_main(
             use_did_exchange=use_did_exchange,
             wallet_type=wallet_type,
             public_did=True,
-            seed="testseed000000000000000000000001",
+            seed="testseed000000000000000000000002",
             cred_type=cred_type,
             aip=aip,
         )

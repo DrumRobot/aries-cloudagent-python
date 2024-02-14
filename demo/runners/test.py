@@ -9,6 +9,7 @@ NGROK_URL = "http://ngrok:4040/api/tunnels"
 variables = [
     "GENESIS_URL",
     "LEDGER_URL",
+    "MEDIATOR_URL",
     "PUBLIC_TAILS_URL",
 ]
 
@@ -34,6 +35,8 @@ if __name__ == "__main__":
         "--seed",
         "testseed000000000000000000000001",
         # "--storage-type",
+        # "indy",
+        # "--wallet-type",
         # "indy",
     ]
     sys.argv = [sys.argv[0]] + args
